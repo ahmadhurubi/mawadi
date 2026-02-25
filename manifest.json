@@ -1,0 +1,26 @@
+{
+  "name": "المواد الدراسية",
+  "short_name": "مواد دراسية",
+  "description": "تابعي تقدمك الدراسي بكل سهولة",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fff5fb",
+  "theme_color": "#ff6eb4",
+  "orientation": "portrait",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

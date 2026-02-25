@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ff6eb4">
+<meta name="apple-mobile-web-app-title" content="مواد دراسية">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<title>المواد الدراسية</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --pink:       #ff6eb4;
+  --pink-dark:  #e0559d;
+  --pink-soft:  #ffe0f0;
+  --purple:     #c96ef5;
+  --purple-soft:#f3e0ff;
+  --mint:       #3dd9b3;
+  --mint-soft:  #d6fff5;
+  --peach:      #ff8c69;
+  --peach-soft: #ffe8e0;
+  --yellow:     #ffd166;
+  --yellow-soft:#fff6dc;
+  --bg:         #fff5fb;
+  --card:       #ffffff;
+  --text:       #2d1a2e;
+  --muted:      #a07ab0;
+  --border:     #f0d6e8;
+  --shadow:     0 4px 20px rgba(255,110,180,0.12);
+  --safe-top:    env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Tajawal', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  direction: rtl;
+  text-align: right;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== SCREENS ===== */
+.screen { display: none; }
+.screen.active { display: block; animation: pop 0.25s ease; }
+@keyframes pop {
+  from { opacity: 0; transform: scale(0.97) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ===== HEADER ===== */
+.header {
+  background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 100%);
+  padding: 14px 20px 14px;
+  padding-top: calc(14px + var(--safe-top));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 4px 16px rgba(201,110,245,0.25);
+  min-height: 60px;
+}
+.header-title {
+  font-size: 18px; font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+.back-btn {
+  background: rgba(255,255,255,0.25);
+  border: 1.5px solid rgba(255,255,255,0.5);
+  cursor: pointer;
+  color: #fff; font-size: 14px; font-weight: 800;
+  padding: 6px 14px; border-radius: 20px;
+  font-family: 'Tajawal', sans-serif;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s;
+}
+.back-btn:active { background: rgba(255,255,255,0.4); }
+
+/* ===== CONTENT ===== */
+.content { padding: 14px 12px; padding-bottom: calc(16px + var(--safe-bottom)); width: 100%; max-width: 600px; margin: 0 auto; }
+
+/* ===== SECTION LABEL ===== */
+.sec-label {
+  font-size: 12px; font-weight: 800;
+  color: var(--muted);
+  margin-bottom: 10px;
+  padding-right: 4px;
+}
+
+/* ===== SUBJECT CARDS - أفقية ===== */
+.subjects-scroll {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 16px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.subjects-scroll::-webkit-scrollbar { display: none; }
+
+.subject-card {
+  flex: 0 0 clamp(120px, 38vw, 160px);
+  border-radius: 20px;
+  padding: 16px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.15s;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
+  min-height: 110px;
+  justify-content: center;
+}
+.subject-card::before {
+  content: '';
+  position: absolute;
+  top: -20px; left: -20px;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+}
+.subject-card:active { transform: scale(0.94); }
+.subject-card:nth-child(1) { background: linear-gradient(145deg, #ff6eb4, #ff3d9a); }
+.subject-card:nth-child(2) { background: linear-gradient(145deg, #c96ef5, #a044e0); }
+.subject-card:nth-child(3) { background: linear-gradient(145deg, #3dd9b3, #1bbf9a); }
+
+.subject-emoji { font-size: clamp(24px, 7vw, 30px); }
+.subject-name {
+  font-size: clamp(11px, 3.2vw, 13px);
+  font-weight: 800;
+  color: #fff;
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* ===== STATS CARD ===== */
+.stats-card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 14px;
+  box-shadow: var(--shadow);
+  border: 1.5px solid var(--border);
+  overflow: hidden;
+}
+.stats-title {
+  font-size: 15px; font-weight: 900;
+  color: var(--text);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.stats-title::before { content: '✨'; font-size: 15px; }
+
+.stats-header {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr;
+  background: linear-gradient(135deg, var(--pink-soft), var(--purple-soft));
+  border-radius: 10px;
+  padding: 7px 4px;
+  margin-bottom: 4px;
+}
+.sh-cell {
+  text-align: center;
+  font-size: clamp(11px, 3vw, 14px);
+  font-weight: 700;
+  color: var(--pink-dark);
+}
+.sh-cell:first-child { text-align: right; font-size: clamp(10px, 2.8vw, 12px); padding-right: 2px; }
+
+.stats-row {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr;
+  padding: 9px 4px;
+  border-bottom: 1px dashed var(--border);
+  align-items: center;
+}
+.stats-row:last-child { border-bottom: none; }
+.sr-name { font-size: clamp(10px, 2.8vw, 12px); font-weight: 700; color: var(--text); line-height: 1.3; }
+.sr-val {
+  text-align: center;
+  font-size: clamp(14px, 4vw, 16px); font-weight: 900;
+  color: var(--pink-dark);
+}
+
+/* ===== SECTION CARDS (داخل المادة) ===== */
+.sec-card {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 15px 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: transform 0.15s;
+  border: 1.5px solid var(--border);
+  min-height: 68px;
+}
+.sec-card:active { transform: scale(0.97); }
+.sec-card-right { display: flex; align-items: center; gap: 12px; }
+.sec-icon {
+  width: 46px; height: 46px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.sec-icon.pink   { background: var(--pink-soft); }
+.sec-icon.purple { background: var(--purple-soft); }
+.sec-icon.peach  { background: var(--peach-soft); }
+.sec-icon.mint   { background: var(--mint-soft); }
+.sec-title { font-size: clamp(14px, 4vw, 16px); font-weight: 800; color: var(--text); }
+.sec-arrow { color: var(--pink); font-size: 18px; font-weight: 900; flex-shrink: 0; }
+
+/* ===== LEC BLOCK ===== */
+.lec-block {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+  border: 1.5px solid var(--border);
+}
+.lec-title {
+  font-size: 14px; font-weight: 800;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.parts-row { display: flex; gap: 8px; }
+
+.part-btn {
+  flex: 1;
+  background: #edd5f5;
+  color: var(--purple);
+  border: none; border-radius: 12px;
+  padding: clamp(8px, 2.5vw, 12px) 6px;
+  font-family: 'Tajawal', sans-serif;
+  font-size: clamp(13px, 3.8vw, 15px); font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: 44px;
+}
+.part-btn.done {
+  background: linear-gradient(135deg, var(--pink), var(--purple));
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(255,110,180,0.35);
+}
+
+.complete-btn {
+  width: 100%;
+  margin-top: 8px;
+  background: #edd5f5;
+  color: var(--purple);
+  border: none; border-radius: 12px;
+  padding: 13px;
+  font-family: 'Tajawal', sans-serif;
+  font-size: clamp(13px, 3.8vw, 15px); font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: 48px;
+}
+.complete-btn.done {
+  background: linear-gradient(135deg, var(--mint), #1bbf9a);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(61,217,179,0.35);
+}
+
+/* ===== HOME DECORATION ===== */
+.home-hero {
+  background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 100%);
+  border-radius: 0 0 28px 28px;
+  padding: 20px 20px 28px;
+  padding-top: calc(20px + var(--safe-top));
+  text-align: center;
+  color: #fff;
+  margin-bottom: -10px;
+}
+.home-hero h1 { font-size: clamp(18px, 5.5vw, 24px); font-weight: 900; margin-bottom: 4px; }
+.home-hero p  { font-size: clamp(12px, 3.5vw, 14px); opacity: 0.85; }
+</style>
+</head>
+<body>
+
+<!-- ===== الرئيسية ===== -->
+<div class="screen active" id="s-home">
+  <div class="home-hero">
+    <h1>✨ المواد الدراسية</h1>
+    <p>تابعي تقدمك بكل سهولة 🌸</p>
+  </div>
+
+  <div class="content" style="padding-top:24px;">
+    <div class="sec-label">اختاري المادة</div>
+
+    <div class="subjects-scroll">
+      <div class="subject-card" onclick="openSubject(0)">
+        <span class="subject-emoji">📖</span>
+        <span class="subject-name">أخلاقيات الأعمال</span>
+      </div>
+      <div class="subject-card" onclick="openSubject(1)">
+        <span class="subject-emoji">📐</span>
+        <span class="subject-name">أساسيات الرياضيات والإحصاء</span>
+      </div>
+      <div class="subject-card" onclick="openSubject(2)">
+        <span class="subject-emoji">📋</span>
+        <span class="subject-name">طرق تحليل وتصنيف الوظائف</span>
+      </div>
+    </div>
+
+    <div class="sec-label">الإحصائيات</div>
+    <div class="stats-card">
+      <div class="stats-title">تقدمك الكلي</div>
+      <div class="stats-header">
+        <div class="sh-cell">المادة</div>
+        <div class="sh-cell">🎥</div>
+        <div class="sh-cell">👥</div>
+        <div class="sh-cell">💬</div>
+        <div class="sh-cell">📄</div>
+      </div>
+      <div class="stats-row">
+        <div class="sr-name">أخلاقيات الأعمال</div>
+        <div class="sr-val" id="st-0-rec">0</div>
+        <div class="sr-val" id="st-0-live">0</div>
+        <div class="sr-val" id="st-0-disc">0</div>
+        <div class="sr-val" id="st-0-hw">0</div>
+      </div>
+      <div class="stats-row">
+        <div class="sr-name">أساسيات الرياضيات</div>
+        <div class="sr-val" id="st-1-rec">0</div>
+        <div class="sr-val" id="st-1-live">0</div>
+        <div class="sr-val" id="st-1-disc">0</div>
+        <div class="sr-val" id="st-1-hw">0</div>
+      </div>
+      <div class="stats-row">
+        <div class="sr-name">طرق تحليل الوظائف</div>
+        <div class="sr-val" id="st-2-rec">0</div>
+        <div class="sr-val" id="st-2-live">0</div>
+        <div class="sr-val" id="st-2-disc">0</div>
+        <div class="sr-val" id="st-2-hw">0</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== المادة ===== -->
+<div class="screen" id="s-subject">
+  <div class="header">
+    <span></span>
+    <span class="header-title" id="subject-name"></span>
+    <button class="back-btn" onclick="show('s-home')">‹ رجوع</button>
+  </div>
+  <div class="content">
+    <div class="sec-card" onclick="openSection('recorded')">
+      <span class="sec-arrow">‹</span>
+      <div class="sec-card-right">
+        <span class="sec-title">المحاضرات المسجلة</span>
+        <div class="sec-icon pink">🎥</div>
+      </div>
+    </div>
+    <div class="sec-card" onclick="openSection('live')">
+      <span class="sec-arrow">‹</span>
+      <div class="sec-card-right">
+        <span class="sec-title">المحاضرات المباشرة</span>
+        <div class="sec-icon purple">👥</div>
+      </div>
+    </div>
+    <div class="sec-card" onclick="openSection('homework')">
+      <span class="sec-arrow">‹</span>
+      <div class="sec-card-right">
+        <span class="sec-title">الواجبات</span>
+        <div class="sec-icon peach">📄</div>
+      </div>
+    </div>
+    <div class="sec-card" onclick="openSection('discussions')">
+      <span class="sec-arrow">‹</span>
+      <div class="sec-card-right">
+        <span class="sec-title">المناقشات</span>
+        <div class="sec-icon mint">💬</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== المحاضرات المسجلة ===== -->
+<div class="screen" id="s-recorded">
+  <div class="header">
+    <span></span>
+    <span class="header-title">المحاضرات المسجلة</span>
+    <button class="back-btn" onclick="show('s-subject')">‹ رجوع</button>
+  </div>
+  <div class="content" id="c-recorded"></div>
+</div>
+
+<!-- ===== المحاضرات المباشرة ===== -->
+<div class="screen" id="s-live">
+  <div class="header">
+    <span></span>
+    <span class="header-title">المحاضرات المباشرة</span>
+    <button class="back-btn" onclick="show('s-subject')">‹ رجوع</button>
+  </div>
+  <div class="content" id="c-live"></div>
+</div>
+
+<!-- ===== الواجبات ===== -->
+<div class="screen" id="s-homework">
+  <div class="header">
+    <span></span>
+    <span class="header-title">الواجبات</span>
+    <button class="back-btn" onclick="show('s-subject')">‹ رجوع</button>
+  </div>
+  <div class="content" id="c-homework"></div>
+</div>
+
+<!-- ===== المناقشات ===== -->
+<div class="screen" id="s-discussions">
+  <div class="header">
+    <span></span>
+    <span class="header-title">المناقشات</span>
+    <button class="back-btn" onclick="show('s-subject')">‹ رجوع</button>
+  </div>
+  <div class="content" id="c-discussions"></div>
+</div>
+
+<script>
+const SUBJECTS = [
+  { name: 'أخلاقيات الأعمال',            rec: 14, recParts: 3, live: 3, hw: 3, disc: 14 },
+  { name: 'أساسيات الرياضيات والإحصاء', rec: 14, recParts: 3, live: 3, hw: 3, disc: 14 },
+  { name: 'طرق تحليل وتصنيف الوظائف',   rec: 14, recParts: 3, live: 3, hw: 3, disc: 14 },
+];
+
+let curSubject = 0;
+const MEM = {};
+
+function get(key) {
+  if (MEM.hasOwnProperty(key)) return MEM[key];
+  try { const v = localStorage.getItem(key); if (v !== null) { MEM[key] = v; return v; } } catch(e) {}
+  return null;
+}
+function set(key, val) { MEM[key] = val; try { localStorage.setItem(key, val); } catch(e) {} }
+function del(key)      { delete MEM[key]; try { localStorage.removeItem(key); } catch(e) {} }
+
+function loadAll() {
+  try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); MEM[k] = localStorage.getItem(k); } } catch(e) {}
+}
+
+function updateStats() {
+  SUBJECTS.forEach((s, si) => {
+    let rec = 0, live = 0, hw = 0, disc = 0;
+    for (let i = 1; i <= s.rec; i++) {
+      let all = true;
+      for (let p = 1; p <= s.recParts; p++) { if (get(`rec_${si}_${i}_${p}`) !== '1') { all = false; break; } }
+      if (all) rec++;
+    }
+    for (let i = 1; i <= s.live; i++) if (get(`live_${si}_${i}`) === '1') live++;
+    for (let i = 1; i <= s.hw;   i++) if (get(`hw_${si}_${i}`)   === '1') hw++;
+    for (let i = 1; i <= s.disc; i++) if (get(`disc_${si}_${i}`) === '1') disc++;
+    document.getElementById(`st-${si}-rec`).textContent  = rec;
+    document.getElementById(`st-${si}-live`).textContent = live;
+    document.getElementById(`st-${si}-disc`).textContent = disc;
+    document.getElementById(`st-${si}-hw`).textContent   = hw;
+  });
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+  if (id === 's-home') updateStats();
+}
+
+function openSubject(idx) {
+  curSubject = idx;
+  document.getElementById('subject-name').textContent = SUBJECTS[idx].name;
+  show('s-subject');
+}
+
+function openSection(type) {
+  renderSection(type);
+  show('s-' + type);
+}
+
+function renderSection(type) {
+  const s = SUBJECTS[curSubject], si = curSubject;
+
+  if (type === 'recorded') {
+    let html = '';
+    for (let i = 1; i <= s.rec; i++) {
+      html += `<div class="lec-block"><div class="lec-title">🎥 المحاضرة المسجلة ${i}</div><div class="parts-row">`;
+      for (let p = 1; p <= s.recParts; p++) {
+        const key = `rec_${si}_${i}_${p}`, done = get(key) === '1';
+        html += `<button class="part-btn${done?' done':''}" data-key="${key}" onclick="togglePart(this)">جزء ${p}</button>`;
+      }
+      html += `</div></div>`;
+    }
+    document.getElementById('c-recorded').innerHTML = html;
+  }
+
+  else if (type === 'live') {
+    let html = '';
+    for (let i = 1; i <= s.live; i++) {
+      const key = `live_${si}_${i}`, done = get(key) === '1';
+      html += `<div class="lec-block">
+        <div class="lec-title">👥 المحاضرة المباشرة ${i}</div>
+        <button class="complete-btn${done?' done':''}" data-key="${key}" onclick="toggleComplete(this)">${done?'✅ مكتملة':'○ اضغط عند الإكمال'}</button>
+      </div>`;
+    }
+    document.getElementById('c-live').innerHTML = html;
+  }
+
+  else if (type === 'homework') {
+    let html = '';
+    for (let i = 1; i <= s.hw; i++) {
+      const key = `hw_${si}_${i}`, done = get(key) === '1';
+      html += `<div class="lec-block">
+        <div class="lec-title">📄 الواجب ${i}</div>
+        <button class="complete-btn${done?' done':''}" data-key="${key}" onclick="toggleComplete(this)">${done?'✅ مكتمل':'○ اضغط عند الإكمال'}</button>
+      </div>`;
+    }
+    document.getElementById('c-homework').innerHTML = html;
+  }
+
+  else if (type === 'discussions') {
+    let html = '';
+    for (let i = 1; i <= s.disc; i++) {
+      const key = `disc_${si}_${i}`, done = get(key) === '1';
+      html += `<div class="lec-block">
+        <div class="lec-title">💬 المناقشة ${i}</div>
+        <button class="complete-btn${done?' done':''}" data-key="${key}" onclick="toggleComplete(this)">${done?'✅ مكتملة':'○ اضغط عند الإكمال'}</button>
+      </div>`;
+    }
+    document.getElementById('c-discussions').innerHTML = html;
+  }
+}
+
+function togglePart(btn) {
+  const key = btn.dataset.key, done = get(key) === '1';
+  if (done) { del(key); btn.classList.remove('done'); }
+  else      { set(key,'1'); btn.classList.add('done'); }
+}
+
+function toggleComplete(btn) {
+  const key = btn.dataset.key, done = get(key) === '1';
+  if (done) { del(key); btn.classList.remove('done'); btn.textContent = '○ اضغط عند الإكمال'; }
+  else      { set(key,'1'); btn.classList.add('done'); btn.textContent = '✅ مكتمل'; }
+}
+
+loadAll();
+updateStats();
+
+// PWA Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
